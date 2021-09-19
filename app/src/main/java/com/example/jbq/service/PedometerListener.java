@@ -12,25 +12,30 @@ import com.example.jbq.bean.PedometerBean;
 public class PedometerListener implements SensorEventListener {
     //当前步数
     private int currentSteps = 0;
+
+    public void setCurrentSteps(int currentSteps) {
+        this.currentSteps = currentSteps;
+    }
+
     //灵敏度
-    private double sensitivity = 30;
+    private float sensitivity = 30;
     //采样时间
     private long mLimit = 300;
     //最后保存的数值
-    private double mLastValue;
+    private float mLastValue;
     //放大
-    private double mScale = -4.0;
+    private float mScale = -4.0f;
     //偏移
-    private double offset = 240;
+    private float offset = 240;
     //采样时间
     private long start = 0;
     private long end = 0;
     //加速度方向
-    private double mLastDirection;
+    private float mLastDirection;
     //记录数值
-    private double mLastExtremes[][] = new double[2][1];
+    private float mLastExtremes[][] = new float[2][1];
     //最后一次变化量
-    private double mLastDiff;
+    private float mLastDiff;
     //是否匹配
     private int mLastMatch;
     //取样数量
@@ -47,20 +52,20 @@ public class PedometerListener implements SensorEventListener {
         Sensor sensor = event.sensor;
         synchronized (this) {
             if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                double sum = 0;
+                float sum = 0;
                 for (int i = 0; i < AVG_NUM; i++) {
-                    double vector = offset + event.values[i] * mScale;
+                    float vector = offset + event.values[i] * mScale;
                     sum += vector;
                 }
-                double avg = sum / AVG_NUM;
+                float avg = sum / AVG_NUM;
                 //判断方向
-                double dir = Double.compare(avg, mLastValue);
+                float dir = Float.compare(avg, mLastValue);
 
                 //反向
                 if (dir == -mLastDirection) {
                     int extType = (dir > 0 ? 0 : 1);
                     mLastExtremes[extType][0] = mLastValue;
-                    double diff = Math.abs(mLastExtremes[extType][0] = mLastExtremes[1 - extType][0]);
+                    float diff = Math.abs(mLastExtremes[extType][0] = mLastExtremes[1 - extType][0]);
                     //大于灵敏度认为有效
                     if (diff > sensitivity) {
                         //是否足够大

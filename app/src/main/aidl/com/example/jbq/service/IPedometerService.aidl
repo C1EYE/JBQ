@@ -1,8 +1,6 @@
 // IPedometerService.aidl
 package com.example.jbq.service;
-
-// Declare any non-default types here with import statements
-
+import com.example.jbq.bean.PedometerChartBean;
 interface IPedometerService {
         //获取计步器步数
         int getStepsCount();
@@ -13,15 +11,15 @@ interface IPedometerService {
         //停止记步
         void stopSetpsCount();
         //获取消耗的卡路里
-        double getCalorie();
+        float getCalorie();
         //获取走路的距离
-        double getDistance();
+        float getDistance();
         //保存数据
         void saveData();
         //设置传感器敏感度
         void setSensitivity(float sensitivity);
         //获取传感器敏感度
-        double getSensitivity();
+        float getSensitivity();
         //获取采样时间
         int getInterval();
         //设置采样时间
@@ -31,5 +29,5 @@ interface IPedometerService {
         //获取运行状态
         int getServiceRunningStatus();
         //获取运动图表数据
-//        PedometerChartBean getChartData();
+        PedometerChartBean getChartData();
 }
