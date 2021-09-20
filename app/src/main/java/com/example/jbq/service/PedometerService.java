@@ -4,12 +4,16 @@ import android.app.Service;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.example.jbq.bean.PedometerBean;
 import com.example.jbq.bean.PedometerChartBean;
 import com.example.jbq.db.DBHelper;
+import com.example.jbq.frame.FrameApplication;
+import com.example.jbq.util.ACache;
 import com.example.jbq.util.Settings;
 import com.example.jbq.util.Utils;
 
@@ -23,6 +27,20 @@ public class PedometerService extends Service {
     private int runStatus = STATUS_NOT_RUN;
     private Settings settings;
     private PedometerChartBean chartBean;
+    private static final long SAVE_CHART_TIME = 60000L;
+    private static Handler handler = new Handler();
+    private Runnable timeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (runStatus == STATUS_RUNNING) {
+                if (handler != null && chartBean != null) {
+                    handler.removeCallbacks(timeRunnable);
+                    updateChartData();
+                    handler.postDelayed(timeRunnable, SAVE_CHART_TIME);
+                }
+            }
+        }
+    };
 
     private IPedometerService.Stub iPedometerService = new IPedometerService.Stub() {
         @Override
@@ -53,6 +71,8 @@ public class PedometerService extends Service {
                 //记录哪天数据
                 pedometerBean.setDay(Utils.getTimestemByDay());
                 runStatus = STATUS_RUNNING;
+                //开始刷新数据
+                handler.postDelayed(timeRunnable, SAVE_CHART_TIME);
             }
         }
 
@@ -62,6 +82,7 @@ public class PedometerService extends Service {
                 Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
                 sensorManager.unregisterListener(pedometerListener, sensor);
                 runStatus = STATUS_NOT_RUN;
+                handler.removeCallbacks(timeRunnable);
             }
         }
 
@@ -150,12 +171,12 @@ public class PedometerService extends Service {
 
         @Override
         public int getServiceRunningStatus() throws RemoteException {
-            return 0;
+            return runStatus;
         }
 
         @Override
         public PedometerChartBean getChartData() throws RemoteException {
-            return null;
+            return chartBean;
         }
 
     };
@@ -170,8 +191,9 @@ public class PedometerService extends Service {
         }
     }
 
-    private void saveChartData(){
-
+    private void saveChartData() {
+        String jsonStr = Utils.objToJson(chartBean);
+        ACache.get(FrameApplication.getInstance()).put("JsonChartData", jsonStr);
     }
 
     @Override

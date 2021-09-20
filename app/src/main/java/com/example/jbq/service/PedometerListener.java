@@ -3,6 +3,7 @@ package com.example.jbq.service;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.util.Log;
 
 import com.example.jbq.bean.PedometerBean;
 
@@ -49,6 +50,7 @@ public class PedometerListener implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        Log.w("FFFF", "onSensorChanged: FUCKFFFFFFFFFFFFFFFFFFFfffffffffffffffffffffffffffffffffffFFFFFFFFFFFFFFFFFFFFFFFFF");
         Sensor sensor = event.sensor;
         synchronized (this) {
             if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
