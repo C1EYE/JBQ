@@ -2,7 +2,9 @@ package com.example.jbq.activity;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
+import android.util.Log;
 import android.view.View;
 
 import com.example.jbq.R;
@@ -29,7 +32,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class HomeActivity extends BaseActivity {
-
+    private static final String TAG = "HomeActivity";
     private android.widget.ImageView imageview;
     private android.widget.TextView daka;
     private android.widget.TextView min;
@@ -115,10 +118,45 @@ public class HomeActivity extends BaseActivity {
         btnStart = findViewById(R.id.btnStart);
         chart1 = findViewById(R.id.chart1);
 
+        imageview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, SettingActivity.class);
+                startActivity(intent);
+            }
+        });
+
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+                builder.setTitle("确认重置");
+                builder.setMessage("您的记录将要被清除，确定吗？");
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (remoteService != null) {
+                            try {
+                                remoteService.stopSetpsCount();
+                                remoteService.resetCount();
+                                chartBean = remoteService.getChartData();
+                                updateChart(chartBean);
+                                status = remoteService.getServiceRunningStatus();
+                                if(status == PedometerService.STATUS_RUNNING){
+                                    btnStart.setText("停止");
+                                }else if(status == PedometerService.STATUS_NOT_RUN){
+                                    btnStart.setText("启动");
+                                }
+                            } catch (RemoteException e) {
+                                LogWriter.d(e.toString());
+                            }
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("取消", null);
+                AlertDialog resetDlg = builder.create();
+                resetDlg.show();
             }
         });
 

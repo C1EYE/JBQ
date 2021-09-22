@@ -25,21 +25,7 @@ public class Utils {
         return 0L;
     }
 
-    public static float getCalorieBySteps(int stepCount) {
-        //步长
-        int stepLen = 50;
-        //体重
-        int bodyWeight = 70;
-        float METRIC_WALKING_FACTOR = 0.708f;
-        float METRIC_RUNNING_FACTOR = 1.02784823f;
-        //卡路里计算公式
-        return (bodyWeight * METRIC_RUNNING_FACTOR) * stepLen * stepCount / 100000.0f;
-    }
 
-    public static float getDistanceBySteps(int stepCount) {
-        int stepLen = 50;
-        return (float) ((stepCount * stepLen) / 100000.0f);
-    }
 
     public static String objToJson(Object obj) {
         Gson gson = new Gson();
@@ -48,6 +34,10 @@ public class Utils {
 
     public static String getFormatVal(double val) {
         DecimalFormat format = new DecimalFormat("0.00");
+        return format.format(val);
+    }
+    public static String getFormatVal(double val,String str) {
+        DecimalFormat format = new DecimalFormat(str);
         return format.format(val);
     }
 

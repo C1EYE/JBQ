@@ -4,6 +4,7 @@
     package="com.example.jbq">
 
     <application
+        android:name=".frame.FrameApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,6 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.SettingActivity"></activity>
+
         <service
             android:name=".service.PedometerService"
             android:enabled="true"

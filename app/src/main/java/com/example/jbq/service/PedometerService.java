@@ -7,7 +7,6 @@ import android.hardware.SensorManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.example.jbq.bean.PedometerBean;
 import com.example.jbq.bean.PedometerChartBean;
@@ -57,8 +56,12 @@ public class PedometerService extends Service {
                 pedometerBean.reset();
                 saveData();
             }
+            if (chartBean != null) {
+                chartBean.reset();
+                saveChartData();
+            }
             if (pedometerListener != null) {
-                pedometerListener.setCurrentSteps(0);
+                pedometerListener.resetCurrentStep();
             }
         }
 
@@ -89,7 +92,7 @@ public class PedometerService extends Service {
         @Override
         public float getCalorie() throws RemoteException {
             if (pedometerBean != null) {
-                return Utils.getCalorieBySteps(pedometerBean.getStepCount());
+                return getCalorieBySteps(pedometerBean.getStepCount());
             }
             return 0;
         }
@@ -98,7 +101,7 @@ public class PedometerService extends Service {
         public float getDistance() {
             try {
                 if (pedometerBean != null) {
-                    return Utils.getDistanceBySteps(pedometerBean.getStepCount());
+                    return getDistanceBySteps(pedometerBean.getStepCount());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -114,7 +117,7 @@ public class PedometerService extends Service {
                     public void run() {
                         DBHelper dbHelper = new DBHelper(PedometerService.this, DBHelper.DB_NAME);
                         pedometerBean.setDistance(getDistance());
-                        pedometerBean.setCalorie(Utils.getCalorieBySteps(pedometerBean.getStepCount()));
+                        pedometerBean.setCalorie(getCalorieBySteps(pedometerBean.getStepCount()));
                         long time = pedometerBean.getLastStepTime() - pedometerBean.getStartTime();
                         if (time == 0) {
                             pedometerBean.setPace(0);
@@ -135,6 +138,9 @@ public class PedometerService extends Service {
         public void setSensitivity(float sensitivity) throws RemoteException {
             if (settings != null) {
                 settings.setSensitivity(sensitivity);
+            }
+            if (pedometerListener != null) {
+                pedometerListener.setSENSITIVITY(sensitivity);
             }
         }
 
@@ -159,6 +165,9 @@ public class PedometerService extends Service {
             if (settings != null) {
                 settings.setInterval(interval);
             }
+            if (pedometerListener != null) {
+                pedometerListener.setmLimit(interval);
+            }
         }
 
         @Override
@@ -180,6 +189,22 @@ public class PedometerService extends Service {
         }
 
     };
+
+    public float getCalorieBySteps(int stepCount) {
+        //步长
+        float stepLen = settings.getSetpLength();
+        //体重
+        float bodyWeight = settings.getBodyWeight();
+        float METRIC_WALKING_FACTOR = 0.708f;
+        float METRIC_RUNNING_FACTOR = 1.02784823f;
+        //卡路里计算公式
+        return (bodyWeight * METRIC_RUNNING_FACTOR) * stepLen * stepCount / 100000.0f;
+    }
+
+    public float getDistanceBySteps(int stepCount) {
+        float stepLen = settings.getSetpLength();
+        return (float) ((stepCount * stepLen) / 100000.0f);
+    }
 
     /**
      * 更新图标数据

@@ -3,7 +3,7 @@ package com.example.jbq.util;
 import android.content.Context;
 
 public class Settings {
-    private static final float[] SENSITIVE_ARRAY = {1.97f, 2.96f, 4.44f, 6.66f, 10.0f, 15.0f, 22.50f, 33.75f, 50.62f};
+    public static final float[] SENSITIVE_ARRAY = {1.97f, 2.96f, 4.44f, 6.66f, 10.0f, 15.0f, 22.50f, 33.75f, 50.62f};
     public static final int[] INTERBAL_ARRAY = {100, 200, 300, 400, 500, 600, 700, 800};
     public static final String SENSITIVITY = "sensitivity";
     public static final String INTERVAL = "interval";
