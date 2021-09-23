@@ -24,7 +24,7 @@ public class WelcomeActivity extends BaseActivity {
             @Override
             public void run() {
                 Intent intent = new Intent();
-                intent.setClass(WelcomeActivity.this, HomeActivity.class);
+                intent.setClass(WelcomeActivity.this, LoginActivity.class);
                 startActivity(intent);
                 WelcomeActivity.this.finish();
             }

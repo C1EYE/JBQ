@@ -12,7 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.SettingActivity"></activity>
+        <activity android:name=".activity.navActivity"></activity>
+        <activity android:name=".activity.AboutActivity" />
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.SettingActivity" />
 
         <service
             android:name=".service.PedometerService"

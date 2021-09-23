@@ -61,6 +61,7 @@ public class HomeActivity extends BaseActivity {
     ThreadPoolExecutor pool = new ThreadPoolExecutor(2, 4, 2000, TimeUnit.MILLISECONDS, new SynchronousQueue<>());
 
 
+
     @Override
     protected void onInitVariable() {
 

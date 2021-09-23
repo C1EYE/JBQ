@@ -28,4 +28,8 @@
         <item>700 ms</item>
         <item>800 ms</item>
     </array>
+    <string name="title_activity_nav">navActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>
